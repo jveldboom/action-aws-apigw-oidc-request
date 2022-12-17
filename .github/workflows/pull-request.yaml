@@ -15,6 +15,9 @@ jobs:
       contents: read
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
@@ -23,6 +26,7 @@ jobs:
 
       - name: AWS API Gateway Request
         uses: ./
+        shell: bash
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: us-east-1
