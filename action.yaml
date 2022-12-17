@@ -1,0 +1,51 @@
+name: AWS API Gateway Request with OIDC
+description: GitHub Action to Make AWS SigV4 Requests to API Gateway
+
+inputs:
+  aws-role-to-assume:
+    description: AWS IAM role arn to assume via OIDC
+    required: true
+  aws-region:
+    description: AWS region name
+    required: true
+  url:
+    description: AWS API Gateway URL
+    required: true
+  method:
+    description: Request method - GET, POST, PUT, etc
+    default: GET
+    required: false
+  headers:
+    description: Request headers in multi-line key/value string format
+    required: false
+  payload:
+    description: Request body payload in JSON string format
+    required: false
+  max-retries:
+    description: Number of times to retry the request
+    default: 0
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1-node16
+      with:
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: API Gateway request
+      working-directory: ${{ github.action_path }}
+      env: # composite action inputs are not set as env vars https://github.com/actions/runner/issues/665
+        INPUT_AWS-REGION: ${{ inputs.aws-region }}
+        INPUT_URL: ${{ inputs.url }}
+        INPUT_METHOD: ${{ inputs.method }}
+        INPUT_HEADERS: ${{ inputs.headers }}
+        INPUT_PAYLOAD: ${{ inputs.payload }}
+        INPUT_MAX-RETRIES: ${{ inputs.max-retries }}
+      run: node dist/index.js

@@ -18,11 +18,20 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::171814638423:role/github-actions-oidc-github-oidc-example-api-api-develop
+          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: us-east-1
 
-      - name: List S3 Buckets
-        run: aws s3 ls
+      - name: AWS API Gateway Request
+        uses: ./
+        with:
+          aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
+          aws-region: us-east-1
+          url: https://5cvtjvq44e.execute-api.us-east-1.amazonaws.com/live/iam-auth
+          # payload: "{}"
+          method: GET
+          headers: |
+            content-type: application/json
+          # max-retries: 3
 
   # unit-test:
   #   runs-on: ubuntu-latest
