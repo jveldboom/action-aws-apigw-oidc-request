@@ -26,7 +26,6 @@ jobs:
 
       - name: AWS API Gateway Request
         uses: ./
-        shell: bash
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: us-east-1

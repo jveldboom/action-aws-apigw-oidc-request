@@ -40,6 +40,7 @@ runs:
         node-version: 16
 
     - name: API Gateway request
+      shell: bash
       working-directory: ${{ github.action_path }}
       env: # composite action inputs are not set as env vars https://github.com/actions/runner/issues/665
         INPUT_AWS-REGION: ${{ inputs.aws-region }}
