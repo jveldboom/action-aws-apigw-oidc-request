@@ -1,0 +1,73 @@
+name: pull-request
+
+on:
+  pull_request:
+  push:
+    branches:
+      - jveldboom/oidc-test
+
+jobs:
+  oidc-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ secrets.aws-role-to-assume }}
+          aws-region: us-east-1
+
+      - name: List S3 Buckets
+        run: aws s3 ls
+
+  # unit-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16
+
+  #     - name: Unit Tests
+  #       run: make test
+
+  #     - name: Validate Distribution Builds
+  #       run: |
+  #         make build
+  #         git diff --exit-code
+
+  #     - name: Ensure Version is Unpublished
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         tag="v$(jq -r .version package.json)"
+  #         release="$(gh api repos/${{ github.repository }}/releases/tags/$tag | jq -r .tag_name)"
+
+  #         if [[ ! -z "$release" && "$release" != "null" ]]; then
+  #           echo "${tag} is an existing ${{ github.repository }} release"
+  #           exit 1
+  #         fi
+
+  # integration-test:
+  #   needs: unit-test
+  #   runs-on: ubuntu-latest
+
+  #   permissions:
+  #     id-token: write # required for OIDC
+  #     contents: read
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: AWS API Gateway Request
+  #       uses: ./release
+  #       with:
+  #         aws-role-to-assume: arn:aws:iam::312280097314:role/github-actions-oidc-events-service-api-develop
+  #         aws-region: us-east-2
+  #         url: https://dev.rt.digitalstudios.discovery.com/events-service-develop/v1/iam/events
+  #         payload: "{}"
+  #         method: GET
+  #         headers: |
+  #           content-type: application/json
+  #         retries: 3
