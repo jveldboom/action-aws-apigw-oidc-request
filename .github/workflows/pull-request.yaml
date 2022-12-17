@@ -9,11 +9,16 @@ on:
 jobs:
   oidc-test:
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # required for OIDC
+      contents: read
+
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: ${{ secrets.aws-role-to-assume }}
+          role-to-assume: arn:aws:iam::171814638423:role/github-actions-oidc-github-oidc-example-api-api-develop
           aws-region: us-east-1
 
       - name: List S3 Buckets
