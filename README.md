@@ -1,5 +1,5 @@
 # GitHub Action for AWS API Gateway Requests with OIDC
-This GitHub action allows you to make AWS SigV4 signed requests to API Gateway using your GitHub OIDC identity. This action uses GitHub's OIDC provider to assume temporary AWS credentials which is used to create an [AWS signed request](https://docs.aws.amazon.com/general/latest/gr/signing-aws-api-requests.html) to API Gateway with [IAM authentication](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html).
+This GitHub Action allows you to make AWS SigV4 signed requests to API Gateway using your GitHub OIDC identity. This action uses GitHub's OIDC provider to assume temporary AWS credentials which is used to create an [AWS signed request](https://docs.aws.amazon.com/general/latest/gr/signing-aws-api-requests.html) to API Gateway with [IAM authentication](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html).
 
 Use-case:
 - **Publish workflow metrics**: Publish metrics from within your GitHub Actions workflows such as workflow/step duration, pass/fail, unit-test coverage, etc.

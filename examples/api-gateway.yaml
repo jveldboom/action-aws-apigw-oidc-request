@@ -151,3 +151,6 @@ Outputs:
   ApiEndpoint:
     Description: API Gateway endpoint URL
     Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStageName}
+  GitHubOidcAssumeRoleArn:
+    Description: IAM role ARN GitHub Actions can assume via OIDC
+    Value: !GetAtt GitHubActionsOIDCRole.Arn

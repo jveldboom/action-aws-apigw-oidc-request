@@ -1,9 +1,10 @@
-
 # AWS Infrastructure
 deploy-oidc-provider:
 	aws cloudformation deploy \
 		--template-file examples/iam-oidc-provider.yaml \
 		--stack-name github-oidc-provider
+
+	$(MAKE) stack-outputs STACK_NAME=github-oidc-provider
 
 deploy-api:
 	aws cloudformation deploy \
@@ -13,7 +14,9 @@ deploy-api:
 		--parameter-overrides \
 			  OidcProviderArn=${AWS_OIDC_PROVIDER_ARN}
 
-	# get stack outputs
+	$(MAKE) stack-outputs STACK_NAME=github-oidc-example-api
+
+stack-outputs:
 	aws cloudformation describe-stacks \
-		--stack-name github-oidc-example-api \
+		--stack-name ${STACK_NAME} \
 		--query 'Stacks[*].Outputs' --output table
