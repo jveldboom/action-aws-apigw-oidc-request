@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/jveldboom/action-aws-apigw-oidc-request.git"
   },
-  "author": "",
+  "author": "John Veldboom",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jveldboom/action-aws-apigw-oidc-request/issues"
