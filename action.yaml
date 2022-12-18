@@ -13,8 +13,8 @@ inputs:
     required: true
   method:
     description: Request method - GET, POST, PUT, etc
-    default: GET
     required: false
+    default: GET
   headers:
     description: Request headers in multi-line key/value string format
     required: false
@@ -23,8 +23,8 @@ inputs:
     required: false
   max-retries:
     description: Number of times to retry the request
-    default: 0
     required: false
+    default: 0
 
 runs:
   using: composite

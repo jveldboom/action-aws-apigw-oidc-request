@@ -1,0 +1,21 @@
+Description: IAM GitHub OIDC Provider
+
+Parameters:
+  OIDCProviderThumbprint:
+    Description: OIDC Provider Thumbprint
+    Type: String
+    Default: 6938fd4d98bab03faadb97b34396831e3780aea1
+
+Resources:
+  GithubOidc:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - !Ref OIDCProviderThumbprint
+
+Outputs:
+  GithubOidcArn:
+    Value: !GetAtt GithubOidc.Arn

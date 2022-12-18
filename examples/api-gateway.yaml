@@ -1,0 +1,153 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: API Gateway
+Parameters:
+  ApplicationName:
+    Description: Name of application
+    Type: String
+    Default: github-oidc-example-api
+  Environment:
+    Type: String
+    Description: Environment name - develop, staging, production, etc
+    Default: develop
+
+  LogRetentionInDays:
+    Type: Number
+    Description: CloudWatch Log Retention Period for Lambdas
+    Default: 7
+
+  # API Gateway
+  ApiGatewayStageName:
+    Type: String
+    Default: live
+
+  OidcProviderArn:
+    Type: String
+    Description: IAM OIDC identity provider ARN
+
+Resources:
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub ${ApplicationName}-${Environment}
+      StageName: !Ref ApiGatewayStageName
+      OpenApiVersion: 3.0.2  # required to prevent extra APIGW stage from being created
+      EndpointConfiguration:
+        Type: REGIONAL
+      TracingEnabled: true
+      DefinitionBody:
+        openapi: 3.0.3
+        info:
+          title: Example API Gateway
+          version: 1.0.0
+
+        paths:
+          /auth/iam:
+            x-amazon-apigateway-any-method:
+              summary: Endpoint with IAM authentication
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiLambda.Arn}/invocations
+
+              responses:
+                '200':
+                  description: OK
+
+              security:
+                - iamAuthorization: []
+
+        components:
+          securitySchemes:
+            iamAuthorization:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: awsSigv4
+
+      MethodSettings:
+        - DataTraceEnabled: true
+          MetricsEnabled: true
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          ResourcePath: /*
+
+      AccessLogSetting:
+        DestinationArn: !GetAtt RestApiLogGroup.Arn
+        # Format: !Ref ApiGatewayAccessLogFormat
+
+  RestApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub API-Gateway-Execution-Logs_${ApplicationName}-${Environment}/${ApiGatewayStageName}
+      RetentionInDays: !Ref LogRetentionInDays
+
+  GitHubActionsOIDCRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub github-actions-oidc-${ApplicationName}-api-${Environment}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref OidcProviderArn
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  # add orgs and repos here along with the branches for each
+                  - repo:jveldboom/action-aws-apigw-oidc-request:* # allows any branch
+                  - repo:GH_ORG/GH_REPO_NAME:refs/heads/main # allow only main branch
+
+      Policies:
+        - PolicyName: api-gateway-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: execute-api:Invoke
+                Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*
+
+  # API Lambda
+  ApiLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt ApiLambdaRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = async (event, context) => {
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ msg: 'Hello from API Gateway' })
+            }
+          }
+
+  ApiLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt ApiLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  ApiLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStageName}

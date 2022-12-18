@@ -7,8 +7,38 @@ on:
       - jveldboom/oidc-test
 
 jobs:
-  oidc-test:
+  unit-test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit test
+        run: yarn test
+
+      - name: Rebuild the dist/ directory
+        run: yarn build
+
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
+            exit 1
+          fi
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [ unit-test ]
 
     permissions:
       id-token: write # required for OIDC
@@ -18,73 +48,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
-          aws-region: us-east-1
-
       - name: AWS API Gateway Request
         uses: ./
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: us-east-1
-          url: https://5cvtjvq44e.execute-api.us-east-1.amazonaws.com/live/iam-auth
+          url: https://5cvtjvq44e.execute-api.us-east-1.amazonaws.com/live/auth/iam
           # payload: "{}"
           method: GET
           headers: |
             content-type: application/json
           # max-retries: 3
-
-  # unit-test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 16
-
-  #     - name: Unit Tests
-  #       run: make test
-
-  #     - name: Validate Distribution Builds
-  #       run: |
-  #         make build
-  #         git diff --exit-code
-
-  #     - name: Ensure Version is Unpublished
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         tag="v$(jq -r .version package.json)"
-  #         release="$(gh api repos/${{ github.repository }}/releases/tags/$tag | jq -r .tag_name)"
-
-  #         if [[ ! -z "$release" && "$release" != "null" ]]; then
-  #           echo "${tag} is an existing ${{ github.repository }} release"
-  #           exit 1
-  #         fi
-
-  # integration-test:
-  #   needs: unit-test
-  #   runs-on: ubuntu-latest
-
-  #   permissions:
-  #     id-token: write # required for OIDC
-  #     contents: read
-
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-
-  #     - name: AWS API Gateway Request
-  #       uses: ./release
-  #       with:
-  #         aws-role-to-assume: arn:aws:iam::312280097314:role/github-actions-oidc-events-service-api-develop
-  #         aws-region: us-east-2
-  #         url: https://dev.rt.digitalstudios.discovery.com/events-service-develop/v1/iam/events
-  #         payload: "{}"
-  #         method: GET
-  #         headers: |
-  #           content-type: application/json
-  #         retries: 3
