@@ -93,6 +93,7 @@ jobs:
 - [ ] update docs to include all inputs. Good example https://github.com/actions/checkout#usage
 - [ ] check for API responses in integration tests to validate both the action outputs and API infra is returning correct values
 - [ ] list action in marketplace
+- [ ] deploy example infrastructure on pushes to main
 
 # License
 This action is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.

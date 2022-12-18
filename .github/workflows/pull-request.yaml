@@ -53,7 +53,7 @@ jobs:
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: us-east-1
-          url: https://5cvtjvq44e.execute-api.us-east-1.amazonaws.com/live/auth/iam
+          url: ${{ secrets.AWS_APIGW_ENDPOINT }}/live/auth/iam
           # payload: "{}"
           method: GET
           headers: |
