@@ -36,6 +36,20 @@ Resources:
       EndpointConfiguration:
         Type: REGIONAL
       TracingEnabled: true
+
+      MethodSettings:
+        - DataTraceEnabled: true
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          MetricsEnabled: true
+          ResourcePath: /*
+          ThrottlingRateLimit: 5 # set to protect my wallet - likely want to remove this in production
+          ThrottlingBurstLimit: 10
+
+      AccessLogSetting:
+        DestinationArn: !GetAtt RestApiLogGroup.Arn
+        # Format: !Ref ApiGatewayAccessLogFormat
+
       DefinitionBody:
         openapi: 3.0.3
         info:
@@ -65,17 +79,6 @@ Resources:
               name: Authorization
               in: header
               x-amazon-apigateway-authtype: awsSigv4
-
-      MethodSettings:
-        - DataTraceEnabled: true
-          MetricsEnabled: true
-          HttpMethod: '*'
-          LoggingLevel: INFO
-          ResourcePath: /*
-
-      AccessLogSetting:
-        DestinationArn: !GetAtt RestApiLogGroup.Arn
-        # Format: !Ref ApiGatewayAccessLogFormat
 
   RestApiLogGroup:
     Type: AWS::Logs::LogGroup
