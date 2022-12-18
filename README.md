@@ -1,12 +1,13 @@
 # GitHub Action for AWS API Gateway Requests with OIDC
-This GitHub Action allows you to make AWS SigV4 signed requests to API Gateway using your GitHub OIDC identity. This action uses GitHub's OIDC provider to assume temporary AWS credentials which is used to create an [AWS signed request](https://docs.aws.amazon.com/general/latest/gr/signing-aws-api-requests.html) to API Gateway with [IAM authentication](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html).
+This GitHub Action allows you to use your GitHub OIDC identity to make [AWS SigV4 signed requests](https://docs.aws.amazon.com/general/latest/gr/signing-aws-api-requests.html) to API Gateway with [IAM authentication](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html).
 
 Use-case:
-- **Publish workflow metrics**: Publish metrics from within your GitHub Actions workflows such as workflow/step duration, pass/fail, unit-test coverage, etc.
-- **Sending data to a backend service**: You can use this action to send data to a backend service that is protected by IAM authorization by calling the appropriate API Gateway endpoint with a `POST` or `PUT` request.
-- **Retrieving data from a backend service**: You can use this action to retrieve data from a backend service that is protected by IAM authorization by calling the appropriate API Gateway endpoint.
-- **Automating the deployment of API Gateway APIs**: You can use this action to automate the deployment of API Gateway APIs by calling the `CreateDeployment` or `UpdateDeployment` API.
-- Really any application that can be fronted by AWS API Gateway can be accessible
+- Publish workflow metrics, such as workflow/step duration, pass/fail, unit-test coverage, etc., from within your GitHub Actions workflows.
+- Send data to a backend service protected by IAM authorization by calling the appropriate API Gateway endpoint with a `POST` or `PUT` request.
+- Retrieve data from a backend service protected by IAM authorization by calling the appropriate API Gateway endpoint.
+- Proxy data directly to an AWS service like [SQS](https://aws.amazon.com/premiumsupport/knowledge-center/api-gateway-proxy-integrate-service/), [SNS](https://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-aws-proxy.html), or [Kinesis](https://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-kinesis.html) with an endpoint method `AWS Service` integration type.
+
+In general, this action can be used to access any application that is fronted by AWS API Gateway and protected by IAM authorization.
 
 Requirements:
 - [GitHub OIDC provider](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) configured within AWS - [example CloudFormation](./examples/iam-oidc-provider.yaml)
