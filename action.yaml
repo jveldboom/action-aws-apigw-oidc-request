@@ -1,5 +1,8 @@
 name: AWS API Gateway Request with OIDC
-description: GitHub Action to Make AWS SigV4 Requests to API Gateway
+description: GitHub Action to make AWS SigV4 requests to API Gateway using OIDC
+branding:
+  icon: cloud
+  color: orange
 
 inputs:
   aws-role-to-assume:
