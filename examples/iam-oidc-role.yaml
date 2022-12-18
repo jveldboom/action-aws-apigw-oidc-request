@@ -1,0 +1,42 @@
+Description: Standalone IAM Example Role
+
+Parameters:
+  OIDCProviderArn:
+    Description: ARN of the GitHub OIDC Provider
+    Type: String
+  ApiGatewayId:
+    Description: ID of the API Gateway
+    Type: String
+
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !Ref OIDCProviderArn
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  # add orgs and repos here along with the branches for each
+                  - repo:jveldboom/action-aws-apigw-oidc-request:* # allows any branch
+                  - repo:GH_ORG/GH_REPO_NAME:refs/heads/main # allow only main branch
+
+      Policies:
+        - PolicyName: api-gateway-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: execute-api:Invoke
+                Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayId}/*
+
+Outputs:
+  Role:
+    Value: !GetAtt Role.Arn
