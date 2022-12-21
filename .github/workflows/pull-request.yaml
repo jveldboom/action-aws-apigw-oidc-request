@@ -67,9 +67,9 @@ jobs:
       - name: Test API Response
         run: |
           TEST_FAILURES=
-          [ "${{ steps.api-request.outputs.status-code }}" != "200" ] && TEST_FAILURES+="status: ${{ steps.api-request.outputs.status-code }}"
-          [ "${{ steps.api-request.outputs.headers }}" != "200" ] && TEST_FAILURES+="headers: ${{ steps.api-request.outputs.headers }}"
-          [ "${{ steps.api-request.outputs.body }}" != "200" ] && TEST_FAILURES+="body: ${{ steps.api-request.outputs.body }}"
+          [ "${{ steps.api-request.outputs.status-code }}" != "200" ] && TEST_FAILURES+="status: ${{ steps.api-request.outputs.status-code }}\n"
+          [ "${{ steps.api-request.outputs.headers }}" != "200" ] && TEST_FAILURES+="headers: ${{ steps.api-request.outputs.headers }}\n"
+          [ "${{ steps.api-request.outputs.body }}" != "200" ] && TEST_FAILURES+="body: ${{ steps.api-request.outputs.body }}\n"
 
           if [  "$TEST_FAILURES" != '' ]; then
             echo "Test Failures:"
