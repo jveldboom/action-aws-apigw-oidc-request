@@ -70,9 +70,9 @@ jobs:
         with:
           script: |
             const statusCode = '${{ steps.api-request.outputs.status-code }}'
-            const headers = '${{ steps.api-request.outputs.headers }}'
-            const body = '${{ steps.api-request.outputs.body }}'
+            const headers = JSON.parse('${{ steps.api-request.outputs.headers }}')
+            const body = JSON.parse('${{ steps.api-request.outputs.body }}')
 
             if (statusCode !== '200') core.setFailed('status code did not equal 200')
-            if (headers.length < 5) core.setFailed('headers length was less than expected')
-            if (body.length < 5) core.setFailed('body length was less than expected')
+            if (Object.keys(headers).length < 6) core.setFailed('headers key length was less than expected')
+            if (body.msg !== 'Hello from API Gateway') core.setFailed('body did not have expected msg')
