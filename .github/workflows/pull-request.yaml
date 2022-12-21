@@ -65,14 +65,21 @@ jobs:
           # max-retries: 3
 
       - name: Test API Response
-        run: |
-          TEST_FAILURES=
-          [ "${{ steps.api-request.outputs.status-code }}" != "200" ] && TEST_FAILURES+="status: ${{ steps.api-request.outputs.status-code }}\n"
-          [ "${{ steps.api-request.outputs.headers }}" != "200" ] && TEST_FAILURES+="headers: ${{ steps.api-request.outputs.headers }}\n"
-          [ "${{ steps.api-request.outputs.body }}" != "200" ] && TEST_FAILURES+="body: ${{ steps.api-request.outputs.body }}\n"
+        uses: actions/github-script@v6
 
-          if [  "$TEST_FAILURES" != '' ]; then
-            echo "Test Failures:"
-            echo -e "$TEST_FAILURES"
-            exit 1
-          fi
+        with:
+          script: |
+            const outputs = {
+              statusCode: '${{ steps.api-request.outputs.status-code }}',
+              headers: '${{ steps.api-request.outputs.headers }}',
+              body: '${{ steps.api-request.outputs.body }}'
+            }
+
+            core.info(JSON.stringify(outputs, null, 2))
+
+            const testFailures = []
+            if (statusCode !== '200') testFailures.push(`status-code: ${statusCode}`)
+            if (headers.length < 5) testFailures.push(`headers: ${JSON.stringify(headers)}`)
+            if (body.length < 5) testFailures.push(`body: ${JSON.stringify(body)}`)
+
+            if (testFailures.length !== 0) core.setFailed(testFailures.join('\n'))
