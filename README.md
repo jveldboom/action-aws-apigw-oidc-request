@@ -49,6 +49,11 @@ Requirements:
     max-retries: ''
 ```
 
+# Outputs
+- `status-code` response status code
+- `headers` response headers
+- `body` response body
+
 # Scenarios
 Here is an example of how to use the action in a workflow:
 

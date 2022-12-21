@@ -2,6 +2,9 @@ name: pull-request
 
 on:
   pull_request:
+  push:
+    branches:
+      - jveldboom/test-outputs
 
 jobs:
   unit-test:
@@ -49,6 +52,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: AWS API Gateway Request
+        id: api-request
         uses: ./
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
@@ -59,3 +63,16 @@ jobs:
           headers: |
             content-type: application/json
           # max-retries: 3
+
+      - name: Test API Response
+        run: |
+          TEST_FAILURES=
+          [ "${{ step.api-request.outputs.status-code }}" != "200" ] && TEST_FAILURES+="status: ${{ step.api-request.outputs.status-code }}"
+          [ "${{ step.api-request.outputs.headers }}" != "200" ] && TEST_FAILURES+="headers: ${{ step.api-request.outputs.headers }}"
+          [ "${{ step.api-request.outputs.body }}" != "200" ] && TEST_FAILURES+="body: ${{ step.api-request.outputs.body }}"
+
+          if [  "$TEST_FAILURES" != '' ]; then
+	          echo "Test Failures:"
+	          echo -e "$TEST_FAILURES"
+	          exit 1
+          fi

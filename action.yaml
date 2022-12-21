@@ -29,6 +29,14 @@ inputs:
     required: false
     default: 0
 
+outputs:
+  status-code:
+    description: response status code
+  headers:
+    description: response headers
+  body:
+    description: response body
+
 runs:
   using: composite
   steps:
