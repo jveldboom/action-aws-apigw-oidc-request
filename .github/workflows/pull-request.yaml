@@ -72,7 +72,7 @@ jobs:
           [ "${{ step.api-request.outputs.body }}" != "200" ] && TEST_FAILURES+="body: ${{ step.api-request.outputs.body }}"
 
           if [  "$TEST_FAILURES" != '' ]; then
-	          echo "Test Failures:"
-	          echo -e "$TEST_FAILURES"
-	          exit 1
+            echo "Test Failures:"
+            echo -e "$TEST_FAILURES"
+            exit 1
           fi
