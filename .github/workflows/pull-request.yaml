@@ -69,17 +69,10 @@ jobs:
 
         with:
           script: |
-            const outputs = {
-              statusCode: '${{ steps.api-request.outputs.status-code }}',
-              headers: '${{ steps.api-request.outputs.headers }}',
-              body: '${{ steps.api-request.outputs.body }}'
-            }
+            const statusCode = '${{ steps.api-request.outputs.status-code }}'
+            const headers = '${{ steps.api-request.outputs.headers }}'
+            const body = '${{ steps.api-request.outputs.body }}'
 
-            core.info(JSON.stringify(outputs, null, 2))
-
-            const testFailures = []
-            if (statusCode !== '200') testFailures.push(`status-code: ${statusCode}`)
-            if (headers.length < 5) testFailures.push(`headers: ${JSON.stringify(headers)}`)
-            if (body.length < 5) testFailures.push(`body: ${JSON.stringify(body)}`)
-
-            if (testFailures.length !== 0) core.setFailed(testFailures.join('\n'))
+            if (statusCode !== '200') core.setFailed('status code did not equal 200')
+            if (headers.length < 5) core.setFailed('headers length was less than expected')
+            if (body.length < 5) core.setFailed('body length was less than expected')
