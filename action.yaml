@@ -29,6 +29,17 @@ inputs:
     required: false
     default: 0
 
+outputs:
+  status-code:
+    description: response status code
+    value: ${{ steps.api-request.outputs.status-code }}
+  headers:
+    description: response headers
+    value: ${{ steps.api-request.outputs.headers }}
+  body:
+    description: response body
+    value: ${{ steps.api-request.outputs.body }}
+
 runs:
   using: composite
   steps:
@@ -43,6 +54,7 @@ runs:
         node-version: 16
 
     - name: API Gateway request
+      id: api-request
       shell: bash
       working-directory: ${{ github.action_path }}
       env: # composite action inputs are not set as env vars https://github.com/actions/runner/issues/665

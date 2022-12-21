@@ -49,6 +49,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: AWS API Gateway Request
+        id: api-request
         uses: ./
         with:
           aws-role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
@@ -59,3 +60,16 @@ jobs:
           headers: |
             content-type: application/json
           # max-retries: 3
+
+      - name: Test API Response
+        uses: actions/github-script@v6
+
+        with:
+          script: |
+            const statusCode = '${{ steps.api-request.outputs.status-code }}'
+            const headers = JSON.parse('${{ steps.api-request.outputs.headers }}')
+            const body = JSON.parse('${{ steps.api-request.outputs.body }}')
+
+            if (statusCode !== '200') core.setFailed('status code did not equal 200')
+            if (Object.keys(headers).length < 6) core.setFailed('headers key length was less than expected')
+            if (body.msg !== 'Hello from API Gateway') core.setFailed('body did not have expected msg')
