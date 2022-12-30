@@ -93,7 +93,7 @@ jobs:
 # TODO
 - [ ] setup release process - maybe manually initially?
 - [x] <strike>finish unit tests while learning jest</strike>
-- [ ] add cfn-lint to CloudFormation files in PR workflow
+- [x] add cfn-lint to CloudFormation files in PR workflow
 - [x] <strike>update docs to include all inputs. Good example https://github.com/actions/checkout#usage</strike>
 - [x] <strike>check for API responses in integration tests to validate both the action outputs and API infra is returning correct values</strike>
 - [x] <strike>list action in marketplace</strike> https://github.com/marketplace/actions/aws-api-gateway-request-with-oidc
