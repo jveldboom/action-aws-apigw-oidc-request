@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - automated-releases
+      - automate-releases
 
 permissions:
   contents: write
