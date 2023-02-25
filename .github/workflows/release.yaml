@@ -30,7 +30,7 @@ jobs:
         env:
           MAJOR: ${{ steps.version.outputs.major-with-prefix }}
         run: |
-          git tag -d ${MAJOR} || true
-          git push origin :refs/tags/${MAJOR}
-          git tag ${MAJOR} ${GITHUB_SHA}
-          git push origin ${MAJOR}
+          git tag -d "${MAJOR}" || true
+          git push origin ":refs/tags/${MAJOR}"
+          git tag "${MAJOR}" "${GITHUB_SHA}"
+          git push origin "${MAJOR}"
