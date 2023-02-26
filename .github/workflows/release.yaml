@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: jveldboom/action-conventional-versioning@v1
+      - name: Get next version
+        uses: jveldboom/action-conventional-versioning@v1
         id: version
 
       - name: Create GitHub Release
