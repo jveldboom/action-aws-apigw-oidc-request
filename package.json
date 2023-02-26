@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard .",
-    "build": "ncc build index.js -o ../dist --license licenses.txt",
+    "build": "ncc build src/index.js -o dist --license licenses.txt",
     "test": "NODE_ENV=test jest --coverage",
     "test:watch": "NODE_ENV=test jest --coverage --watch"
   },

@@ -15,16 +15,16 @@ jobs:
           node-version: 16
 
       - name: Install dependencies
-        run: cd src && yarn install
+        run: yarn install
 
       - name: Lint
-        run: cd src && yarn lint
+        run: yarn lint
 
       - name: Unit test
-        run: cd src && yarn test
+        run: yarn test
 
       - name: Rebuild the dist/ directory
-        run: cd src && yarn build
+        run: yarn build
 
       - name: Compare the expected and actual dist/ directories
         run: |
