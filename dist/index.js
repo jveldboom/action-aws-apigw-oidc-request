@@ -1,37 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2932:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const core = __nccwpck_require__(2186)
-const utils = __nccwpck_require__(1252)
-
-const run = async () => {
-  try {
-    const res = await utils.requestWithRetries({
-      url: core.getInput('url'),
-      method: core.getInput('method'),
-      headers: utils.getHeadersFromInput(core.getMultilineInput('headers')),
-      payload: core.getInput('payload') || undefined,
-      region: core.getInput('aws-region'),
-      maxRetries: core.getInput('max-retries')
-    })
-
-    core.setOutput('status-code', res.statusCode)
-    core.setOutput('headers', res.headers)
-    core.setOutput('body', res.body)
-  } catch (err) {
-    utils.handleMainError(err)
-  }
-}
-
-if (process.env.NODE_ENV !== 'test') run()
-module.exports = run
-
-
-/***/ }),
-
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -6650,7 +6619,38 @@ exports.default = _default;
 
 /***/ }),
 
-/***/ 1252:
+/***/ 4351:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186)
+const utils = __nccwpck_require__(1608)
+
+const run = async () => {
+  try {
+    const res = await utils.requestWithRetries({
+      url: core.getInput('url'),
+      method: core.getInput('method'),
+      headers: utils.getHeadersFromInput(core.getMultilineInput('headers')),
+      payload: core.getInput('payload') || undefined,
+      region: core.getInput('aws-region'),
+      maxRetries: core.getInput('max-retries')
+    })
+
+    core.setOutput('status-code', res.statusCode)
+    core.setOutput('headers', res.headers)
+    core.setOutput('body', res.body)
+  } catch (err) {
+    utils.handleMainError(err)
+  }
+}
+
+if (process.env.NODE_ENV !== 'test') run()
+module.exports = run
+
+
+/***/ }),
+
+/***/ 1608:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const axios = __nccwpck_require__(1441)
@@ -10869,7 +10869,7 @@ module.exports = require("zlib");
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(2932);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(4351);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
