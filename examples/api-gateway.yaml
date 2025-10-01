@@ -119,7 +119,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs22.x
       Role: !GetAtt ApiLambdaRole.Arn
       Code:
         ZipFile: |
