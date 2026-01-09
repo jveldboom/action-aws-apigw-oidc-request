@@ -35,11 +35,11 @@ describe('index', () => {
 
     await index()
 
-    expect(utils.requestWithRetries).toBeCalledTimes(1)
+    expect(utils.requestWithRetries).toHaveBeenCalledTimes(1)
 
     // TODO: figure why does this test does not work properly to passing in headers
     // The spy pulls in the signed request which includes the auth headers :shrug:
-    expect(utils.requestWithRetries).toBeCalledWith({
+    expect(utils.requestWithRetries).toHaveBeenCalledWith({
       url: process.env.INPUT_URL,
       method: process.env.INPUT_METHOD,
       headers: undefined,
@@ -74,6 +74,6 @@ describe('index', () => {
 
     await index()
 
-    expect(utils.requestWithRetries).toBeCalledTimes(1)
+    expect(utils.requestWithRetries).toHaveBeenCalledTimes(1)
   })
 })

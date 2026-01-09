@@ -115,7 +115,7 @@ describe('requests', () => {
       })
 
       await utils.requestWithRetries({ url: 'https://example.com' })
-      expect(axios.request).toBeCalledTimes(1)
+      expect(axios.request).toHaveBeenCalledTimes(1)
     })
 
     it('should retry 2 times and return successfully', async () => {
@@ -127,7 +127,7 @@ describe('requests', () => {
       const res = await utils.requestWithRetries({ url: 'https://example.com', baseDelay: 10 })
       expect(res).toStrictEqual({ body: 'test', headers: {}, statusCode: 200 })
 
-      expect(axios.request).toBeCalledTimes(3) // called 3 times total (initial + 2 retries)
+      expect(axios.request).toHaveBeenCalledTimes(3) // called 3 times total (initial + 2 retries)
     })
 
     it('should retry 3 times and throw error', async () => {
@@ -139,7 +139,7 @@ describe('requests', () => {
         expect(err).toBe('test retry error')
       }
 
-      expect(axios.request).toBeCalledTimes(4) // called 4 times total (initial + 3 retries)
+      expect(axios.request).toHaveBeenCalledTimes(4) // called 4 times total (initial + 3 retries)
     })
   })
 
@@ -184,17 +184,17 @@ describe('requests', () => {
   describe('handleMainError()', () => {
     it('should set failed and output response failure', () => {
       utils.handleMainError({ response: {} })
-      expect(core.setFailed).toBeCalledWith('request failed')
+      expect(core.setFailed).toHaveBeenCalledWith('request failed')
     })
 
     it('should set failed and output request failure', () => {
       utils.handleMainError({ request: { failed: true } })
-      expect(core.setFailed).toBeCalledWith({ failed: true })
+      expect(core.setFailed).toHaveBeenCalledWith({ failed: true })
     })
 
     it('should set failed and output error', () => {
       utils.handleMainError(new Error('unknown error'))
-      expect(core.setFailed).toBeCalledTimes(2)
+      expect(core.setFailed).toHaveBeenCalledTimes(2)
       expect(core.setFailed).toHaveBeenNthCalledWith(2, 'unknown error')
     })
   })
