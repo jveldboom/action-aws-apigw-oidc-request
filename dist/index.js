@@ -7949,11 +7949,11 @@ const getHeadersFromInput = (headersInput = []) => {
   // loop through array of labels in [ 'key: value', 'key: value' ] format
   // split each array item to get the key and value to add to "labels" object
   for (const item of headersInput) {
-    const prop = item.split(':')
-    if (prop.length !== 2) continue
+    const colonIndex = item.indexOf(':')
+    if (colonIndex === -1) continue
 
-    const key = prop[0].trim()
-    const value = prop[1].trim()
+    const key = item.slice(0, colonIndex).trim()
+    const value = item.slice(colonIndex + 1).trim()
     if (key.length > 0 && value.length > 0) headers[key] = value
   }
 
@@ -7965,9 +7965,9 @@ const handleMainError = (err) => {
   if (err.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
-    core.info('body', err.response.data)
-    core.info('status', err.response.status)
-    core.info('headers', err.response.headers)
+    core.info(`body: ${JSON.stringify(err.response.data)}`)
+    core.info(`status: ${err.response.status}`)
+    core.info(`headers: ${JSON.stringify(err.response.headers)}`)
     core.setFailed('request failed')
   } else if (err.request) {
     // The request was made but no response was received
