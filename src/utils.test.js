@@ -179,6 +179,12 @@ describe('requests', () => {
       const expected = { foo: 'bar', 'x-cache-age': '10', padding: 'padding' }
       expect(utils.getHeadersFromInput(testArguments)).toStrictEqual(expected)
     })
+
+    it('should return header value with colons intact', () => {
+      const testArguments = ['authorization: Bearer token:value', 'x-date: Mon, 01 Jan 2024 00:00:00 GMT']
+      const expected = { authorization: 'Bearer token:value', 'x-date': 'Mon, 01 Jan 2024 00:00:00 GMT' }
+      expect(utils.getHeadersFromInput(testArguments)).toStrictEqual(expected)
+    })
   })
 
   describe('handleMainError()', () => {

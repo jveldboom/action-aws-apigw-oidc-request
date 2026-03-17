@@ -90,8 +90,5 @@ jobs:
           echo "Body: ${{ steps.api-request.outputs.body }}"
 ```
 
-# TODO
-- [ ] deploy example infrastructure on pushes to main
-
 # License
 This action is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more information.

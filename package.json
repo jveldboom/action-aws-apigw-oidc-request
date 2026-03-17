@@ -15,6 +15,9 @@
   },
   "author": "John Veldboom",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "bugs": {
     "url": "https://github.com/jveldboom/action-aws-apigw-oidc-request/issues"
   },

@@ -6,6 +6,6 @@ updates:
       interval: weekly
 
   - package-ecosystem: yarn
-    directory: /src
+    directory: /
     schedule:
       interval: weekly

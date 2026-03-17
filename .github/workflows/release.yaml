@@ -13,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get next version
         uses: jveldboom/action-conventional-versioning@v1
@@ -25,7 +25,7 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.version-with-prefix }}" \
             --generate-notes \
-            --target "${{ github.sha }}"
+            --notes-start-tag "${{ steps.version.outputs.previous-version-with-prefix }}"
 
       - name: Update Major Tag
         env:
