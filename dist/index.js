@@ -7967,7 +7967,6 @@ const handleMainError = (err) => {
     // that falls out of the range of 2xx
     core.info(`body: ${JSON.stringify(err.response.data)}`)
     core.info(`status: ${err.response.status}`)
-    core.info(`headers: ${JSON.stringify(err.response.headers)}`)
     core.setFailed('request failed')
   } else if (err.request) {
     // The request was made but no response was received
