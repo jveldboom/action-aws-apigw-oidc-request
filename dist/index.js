@@ -8992,7 +8992,7 @@ const request = async ({ url, method, headers, payload, region }) => {
   const res = await axios.request({
     ...signed,
     url,
-    data: payload,
+    data: signed.body,
     timeout: 3000
   })
 
@@ -9017,7 +9017,8 @@ const request = async ({ url, method, headers, payload, region }) => {
 const signRequest = ({ url, method, headers, body, region, service = 'execute-api' }) => {
   const { host, pathname } = new URL(url)
   return aws4.sign({
-    body: JSON.stringify(body),
+    // action inputs are always strings, so only serialize non-string bodies
+    body: typeof body === 'string' ? body : JSON.stringify(body),
     headers,
     host,
     method,
@@ -9099,7 +9100,7 @@ const handleMainError = (err) => {
   } else if (err.request) {
     // The request was made but no response was received
     // `error.request` is an instance of http.ClientRequest in node.js
-    core.setFailed(err.request)
+    core.setFailed(`no response received: ${err.message}`)
   } else {
     // Something happened in setting up the request that triggered an Error
     core.setFailed(err.stack)
