@@ -9,3 +9,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # 3.x is ESM-only and breaks the CommonJS require() usage and Jest
+      - dependency-name: "@actions/core"
+        update-types: ["version-update:semver-major"]
