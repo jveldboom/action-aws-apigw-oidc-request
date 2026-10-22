@@ -51,6 +51,16 @@ describe('requests', () => {
       expect(res).toStrictEqual(expected)
     })
 
+    it('should send the signed body to axios for a string payload', async () => {
+      axios.request.mockResolvedValueOnce({ data: 'test', headers: {}, status: 200 })
+
+      await utils.request({ ...exampleRequest, method: 'POST', payload: '{"foo":"bar"}' })
+
+      const sent = axios.request.mock.calls[0][0]
+      expect(sent.data).toBe('{"foo":"bar"}')
+      expect(sent.body).toBe(sent.data)
+    })
+
     it('should call axios with a signed request', async () => {
       axios.request.mockResolvedValueOnce({
         data: 'test',
@@ -81,6 +91,22 @@ describe('requests', () => {
       delete process.env.AWS_ACCESS_KEY_ID
       delete process.env.AWS_SECRET_ACCESS_KEY
       delete process.env.AWS_DEFAULT_REGION
+    })
+
+    it('should not double-encode a string body', () => {
+      const body = '{"foo":"bar"}'
+      const signed = utils.signRequest({ ...exampleRequest, body })
+      expect(signed.body).toBe(body)
+    })
+
+    it('should serialize an object body as JSON', () => {
+      const signed = utils.signRequest({ ...exampleRequest, body: { foo: 'bar' } })
+      expect(signed.body).toBe('{"foo":"bar"}')
+    })
+
+    it('should leave body undefined when there is no body', () => {
+      const signed = utils.signRequest({ ...exampleRequest, body: undefined })
+      expect(signed.body).toBeUndefined()
     })
 
     it('should return a signed request', () => {
@@ -193,9 +219,16 @@ describe('requests', () => {
       expect(core.setFailed).toHaveBeenCalledWith('request failed')
     })
 
-    it('should set failed and output request failure', () => {
-      utils.handleMainError({ request: { failed: true } })
-      expect(core.setFailed).toHaveBeenCalledWith({ failed: true })
+    it('should set failed with a string message on request failure', () => {
+      utils.handleMainError({ request: { circular: true }, message: 'timeout of 3000ms exceeded' })
+      expect(core.setFailed).toHaveBeenCalledWith('no response received: timeout of 3000ms exceeded')
+    })
+
+    it('should only pass a string to setFailed for a circular request object', () => {
+      const request = {}
+      request.self = request
+      utils.handleMainError({ request, message: 'socket hang up' })
+      expect(typeof core.setFailed.mock.calls[0][0]).toBe('string')
     })
 
     it('should set failed and output error', () => {
